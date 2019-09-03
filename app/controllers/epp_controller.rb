@@ -362,7 +362,9 @@ class EppController < ApplicationController
   end
 
   def epp_session_id
-    cookies[:session] # Passed by mod_epp https://github.com/mod-epp/mod-epp#requestscript-interface
+    # Passed by EPP proxy
+    # https://github.com/internetee/epp_proxy#translation-of-epp-calls
+    cookies[:session]
   end
 
   def ensure_session_id_passed
