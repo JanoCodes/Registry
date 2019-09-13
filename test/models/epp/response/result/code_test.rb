@@ -47,6 +47,7 @@ class EppResponseResultCodeTest < ActiveSupport::TestCase
       parameter_value_policy_error: 2306,
       data_management_policy_violation: 2308,
       authentication_error_server_closing_connection: 2501,
+      session_limit_exceeded_server_closing_connection: 2502,
     }
     assert_equal codes, Epp::Response::Result::Code.codes
   end
@@ -74,6 +75,7 @@ class EppResponseResultCodeTest < ActiveSupport::TestCase
       2306 => 'Parameter value policy error',
       2308 => 'Data management policy violation',
       2501 => 'Authentication error; server closing connection',
+      2502 => 'Session limit exceeded; server closing connection',
     }
     assert_equal descriptions, Epp::Response::Result::Code.default_descriptions
   end
