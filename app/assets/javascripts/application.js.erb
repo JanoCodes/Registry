@@ -1,0 +1,12 @@
+//= require airbrake
+
+var airbrake = new airbrakeJs.Client({
+    host: 'http://test:3001',
+    projectId: <%= ENV['airbrake_project_id'] %>,
+    projectKey: '<%= ENV['airbrake_project_key'] %>'
+});
+
+window.addEventListener('error', function (e) {
+    airbrake.notify(e.error);
+    return false;
+});
