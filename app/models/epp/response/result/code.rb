@@ -2,9 +2,9 @@ module Epp
   class Response
     class Result
       class Code
-        attr_reader :value
+        attr_reader :number
 
-        KEY_TO_VALUE = {
+        KEY_TO_NUMBER = {
           completed_successfully: 1000,
           completed_successfully_action_pending: 1001,
           completed_successfully_no_messages: 1300,
@@ -29,9 +29,9 @@ module Epp
           command_failed: 2400,
           authentication_error_server_closing_connection: 2501,
         }.freeze
-        private_constant :KEY_TO_VALUE
+        private_constant :KEY_TO_NUMBER
 
-        DEFAULT_DESCRIPTIONS = {
+        NUMBER_TO_DEFAULT_DESCRIPTION = {
           1000 => 'Command completed successfully',
           1001 => 'Command completed successfully; action pending',
           1300 => 'Command completed successfully; no messages',
@@ -56,28 +56,47 @@ module Epp
           2400 => 'Command failed',
           2501 => 'Authentication error; server closing connection',
         }.freeze
-        private_constant :DEFAULT_DESCRIPTIONS
+        private_constant :NUMBER_TO_DEFAULT_DESCRIPTION
 
         def self.codes
-          KEY_TO_VALUE
+          KEY_TO_NUMBER
         end
 
         def self.default_descriptions
-          DEFAULT_DESCRIPTIONS
+          NUMBER_TO_DEFAULT_DESCRIPTION
         end
 
-        def self.key(key)
-          new(KEY_TO_VALUE[key])
-        end
+        def initialize(number_or_key)
+          number = case number_or_key
+          when String
+            number_or_key.to_i
+          when Symbol
+            KEY_TO_NUMBER[number_or_key]
+          else
+            number_or_key
+          end
 
-        def initialize(value)
-          value = value.to_i
-          raise ArgumentError, "Invalid value: #{value}" unless KEY_TO_VALUE.value?(value)
-          @value = value
+          raise ArgumentError, "Invalid number: #{number}" unless KEY_TO_NUMBER.value?(number)
+
+          @number = number
         end
 
         def ==(other)
-          value == other.value
+          number == other.number
+        end
+
+        def to_i
+          number
+        end
+
+        def to_s
+          NUMBER_TO_DEFAULT_DESCRIPTION[number]
+        end
+
+        alias_method :description, :to_s
+
+        def inspect
+          "#{number} #{description}"
         end
       end
     end

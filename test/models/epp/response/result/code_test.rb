@@ -1,27 +1,30 @@
 require 'test_helper'
 
 class EppResponseResultCodeTest < ActiveSupport::TestCase
-  def test_creates_code_by_key
+  def test_creates_new_instance_by_number_as_integer
+    number = 1000
+    assert_equal number, Epp::Response::Result::Code.new(number).number
+  end
+
+  def test_creates_new_instance_by_number_as_string
+    number = 1000
+    assert_equal number, Epp::Response::Result::Code.new(number.to_s).number
+  end
+
+  def test_creates_new_instance_by_key
+    number = 1000
     key = :completed_successfully
-    assert_includes Epp::Response::Result::Code.codes.keys, key
-
-    assert_kind_of Epp::Response::Result::Code, Epp::Response::Result::Code.key(key)
+    assert_equal number, Epp::Response::Result::Code.new(key).number
   end
 
-  def test_creates_new_code_by_string_value
-    code_value = Epp::Response::Result::Code.codes.values.first
-    code = Epp::Response::Result::Code.new(code_value.to_s)
-    assert_equal code_value, code.value
-  end
-
-  def test_invalid_code_value
-    invalid_code_value = 0000
-    refute_includes Epp::Response::Result::Code.codes.values, invalid_code_value
+  def test_creating_new_instance_by_invalid_number_fails
+    invalid_number = 0000
+    refute_includes Epp::Response::Result::Code.codes.values, invalid_number
 
     e = assert_raises ArgumentError do
-      Epp::Response::Result::Code.new(invalid_code_value)
+      Epp::Response::Result::Code.new(invalid_number)
     end
-    assert_equal "Invalid value: #{invalid_code_value}", e.message
+    assert_equal "Invalid number: #{invalid_number}", e.message
   end
 
   def test_returns_code_values
@@ -84,5 +87,27 @@ class EppResponseResultCodeTest < ActiveSupport::TestCase
 
   def test_equality
     assert_equal Epp::Response::Result::Code.new(1000), Epp::Response::Result::Code.new(1000)
+  end
+
+  def test_to_i
+    number = 1000
+    code = Epp::Response::Result::Code.new(number)
+    assert_equal number, code.to_i
+  end
+
+  def test_to_s
+    code = Epp::Response::Result::Code.new(:completed_successfully)
+    description = code.class.default_descriptions[code.to_i]
+    assert_equal description, code.to_s
+  end
+
+  def test_inspect
+    code = Epp::Response::Result::Code.new(:completed_successfully)
+    assert_equal '1000 Command completed successfully', code.inspect
+  end
+
+  def test_description
+    code = Epp::Response::Result::Code.new(:completed_successfully)
+    assert_equal 'Command completed successfully', code.description
   end
 end
