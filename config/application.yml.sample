@@ -158,7 +158,7 @@ lhv_keystore_alias:
 lhv_ca_file: # Needed only in dev mode
 lhv_dev_mode: 'false'
 
-epp_session_limit_per_registrar: '4'
+epp_sessions_per_registrar: '4'
 
 # Since the keys for staging are absent from the repo, we need to supply them separate for testing.
 test:
