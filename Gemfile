@@ -89,7 +89,6 @@ group :development, :test do
   gem 'pry', '0.10.1'
 
   gem 'bullet',        '4.14.7' # for finding database optimizations
-  gem 'autodoc'
   gem 'puma'
 end
 
