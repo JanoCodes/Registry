@@ -13,8 +13,8 @@ module Epp
     before_action :validate_request
     before_action :update_epp_session, if: 'signed_in?'
 
-    around_action :wrap_exceptions
-
+#    around_action :wrap_exceptions
+    around_action :catch_epp_errors	
     helper_method :current_user
     helper_method :resource
 
@@ -113,7 +113,50 @@ module Epp
         end
       end
 
+
+ def catch_epp_errors	
+      err = catch(:epp_error) do	
+        yield	
+        nil	
+      end	
+      return unless err	
+      @errors = [err]	
+      handle_errors	
+    end	
+
+    rescue_from StandardError do |e|	
+      @errors ||= []	
+
+      if e.class == CanCan::AccessDenied	
+        if @errors.blank?	
+          @errors = [{	
+                       msg: t('errors.messages.epp_authorization_error'),	
+                       code: '2201'	
+                     }]	
+        end	
+      else	
+        if @errors.blank?	
+          @errors = [{	
+                       msg: 'Internal error.',	
+                       code: '2400'	
+                     }]	
+        end	
+
+        if Rails.env.test? || Rails.env.development?	
+          puts e.backtrace.reverse.join("\n")	
+          puts "\n  BACKTRACE REVERSED!\n"	
+          puts "\n  FROM-EPP-RESCUE: #{e.message}\n\n\n"	
+        else	
+          logger.error "FROM-EPP-RESCUE: #{e.message}"	
+          logger.error e.backtrace.join("\n")	
+        end	
+      end	
+
+
       @errors.uniq!
+      logger.error "\nFOLLOWING ERRORS OCCURRED ON EPP QUERY:"	
+      logger.error @errors.inspect	
+      logger.error "\n"	
 
       render_epp_response '/epp/error'
     end

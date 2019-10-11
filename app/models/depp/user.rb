@@ -40,7 +40,9 @@ module Depp
     def validate_existance_in_server
       return if errors.any?
       res = server.open_connection
+      logger.error "FROM-EPP-RESCUE: # validate_existance"	
       unless Nokogiri::XML(res).css('greeting')
+        logger.error "FROM-EPP-RESCUE: inside "	
         errors.add(:base, :failed_to_open_connection_to_epp_server)
         server.close_connection # just in case
         return
