@@ -57,6 +57,12 @@ Rails.application.routes.draw do
       as: 'cors_preflight_check'
   end
 
+  namespace :registrar_api do
+    namespace :v1 do
+      resources :contacts, except: %i[new edit]
+    end
+  end
+
   # REGISTRAR ROUTES
   namespace :registrar do
     root 'polls#show'
