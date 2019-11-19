@@ -1,3 +1,6 @@
+19.11.2019
+* Updated Rails to 5.0.7 [#377](https://github.com/internetee/registry/issues/377)
+
 15.11.2019
 * Restored EPP exception logging to syslog [#1371](https://github.com/internetee/registry/issues/1371)
 
