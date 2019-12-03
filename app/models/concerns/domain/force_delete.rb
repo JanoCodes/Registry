@@ -62,10 +62,17 @@ module Concerns::Domain::ForceDelete
     statuses.delete(DomainStatus::SERVER_UPDATE_PROHIBITED)
     statuses.delete(DomainStatus::PENDING_DELETE)
     statuses.delete(DomainStatus::SERVER_MANUAL_INZONE)
+    statuses.delete(DomainStatus::CLIENT_HOLD)
   end
 
   def allow_deletion
     statuses.delete(DomainStatus::CLIENT_DELETE_PROHIBITED)
     statuses.delete(DomainStatus::SERVER_DELETE_PROHIBITED)
+  end
+
+  def set_hold
+    if force_delete_date < valid_to && (force_delete_date + 15.days) > Time.zone.today
+      statuses << DomainStatus::CLIENT_HOLD
+    end
   end
 end
